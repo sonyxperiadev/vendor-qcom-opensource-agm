@@ -16,7 +16,6 @@ LOCAL_SHARED_LIBRARIES := \
     libcutils \
     libhardware \
     libbase \
-    libar-gsl \
     vendor.qti.hardware.AGMIPC@1.0 \
     libagm
 
