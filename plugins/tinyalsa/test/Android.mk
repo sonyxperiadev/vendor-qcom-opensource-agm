@@ -125,8 +125,10 @@ LOCAL_VENDOR_MODULE := true
 LOCAL_CFLAGS        += -Wno-unused-parameter -Wno-unused-result
 LOCAL_CFLAGS        += -DBACKEND_CONF_FILE=\"/vendor/etc/backend_conf.xml\"
 
+ifeq ($(TARGET_COMPILE_WITH_MSM_KERNEL),true)
 LOCAL_C_INCLUDES    += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+endif
 
 LOCAL_SRC_FILES     := agmcompressplay.c
 
