@@ -38,6 +38,7 @@
 #include <sound/asound.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <strings.h>
 #include <stdio.h>
 #include <unistd.h>
