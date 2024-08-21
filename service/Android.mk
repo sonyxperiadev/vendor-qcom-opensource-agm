@@ -44,7 +44,8 @@ LOCAL_HEADER_LIBRARIES := \
     libspf-headers \
     libutils_headers \
     libacdb_headers \
-    libarosal_headers
+    libarosal_headers \
+    libgsl-headers
 
 LOCAL_SHARED_LIBRARIES := \
     libar-gsl \
