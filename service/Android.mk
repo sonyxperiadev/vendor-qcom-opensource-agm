@@ -45,7 +45,8 @@ LOCAL_HEADER_LIBRARIES := \
     libutils_headers \
     libacdb_headers \
     libarosal_headers \
-    libgsl-headers
+    libgsl-headers \
+    kvh2xml_headers
 
 LOCAL_SHARED_LIBRARIES := \
     libar-gsl \
