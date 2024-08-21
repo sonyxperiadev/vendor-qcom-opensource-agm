@@ -43,7 +43,8 @@ LOCAL_SRC_FILES  := \
 LOCAL_HEADER_LIBRARIES := \
     libspf-headers \
     libutils_headers \
-    libacdb_headers
+    libacdb_headers \
+    libarosal_headers
 
 LOCAL_SHARED_LIBRARIES := \
     libar-gsl \
