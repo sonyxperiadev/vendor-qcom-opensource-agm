@@ -55,6 +55,11 @@ LOCAL_SHARED_LIBRARIES := \
     libaudioroute \
     libats
 
+ifeq ($(strip $(PRODUCT_PLATFORM_SOD)), true)
+LOCAL_CFLAGS           += -DPRODUCT_PLATFORM_SOD
+LOCAL_SHARED_LIBRARIES += libcutils
+endif
+
 #if android version is R, use qtitinyalsa lib otherwise use upstream ones
 #This assumes we would be using AR code only for Android R and subsequent versions.
 ifneq ($(filter R 11,$(PLATFORM_VERSION)),)

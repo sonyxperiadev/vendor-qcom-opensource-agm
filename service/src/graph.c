@@ -75,6 +75,10 @@
 #include <agm/metadata.h>
 #include <agm/utils.h>
 
+#ifdef PRODUCT_PLATFORM_SOD
+#include <cutils/properties.h>
+#endif
+
 #ifdef DYNAMIC_LOG_ENABLED
 #include <log_xml_parser.h>
 #define LOG_MASK AGM_MOD_FILE_GRAPH
@@ -121,6 +125,50 @@ typedef struct module_info_link_list {
 
 static char acdb_path[ACDB_PATH_MAX_LENGTH];
 static void print_graph_alias(const struct agm_meta_data_gsl *meta_data_kv);
+
+#ifdef PRODUCT_PLATFORM_SOD
+static struct sony_devices {
+    char *device_name;
+    char *codec_name_sysfs;
+};
+
+static struct sony_devices sony_devices_info[] = {
+    { "pdx246", "/sys/bus/i2c/drivers/aw882xx_smartpa/1-0034/chip_name" },
+};
+
+static void get_acdb_files_path(const char *acdb_files_path)
+{
+    char prop[PROPERTY_VALUE_MAX] = {0};
+    char buf[FILE_PATH_EXTN_MAX_SIZE] = {0};
+    FILE *file = NULL;
+    size_t len = 0;
+
+    if (!property_get("ro.product.vendor.device", prop, ""))
+        return;
+
+    for (int i = 0; i < sizeof(sony_devices_info) / sizeof(*sony_devices_info); i++) {
+        if (strcmp(sony_devices_info[i].device_name, prop) == 0) {
+            file = fopen(sony_devices_info[i].codec_name_sysfs, "r");
+            if (file == NULL)
+                return;
+
+            if (fgets(buf, sizeof(buf) - 1, file)) {
+                // Remove newline if it exists
+                len = strlen(buf);
+                if (len > 0 && buf[len - 1] == '\n')
+                    buf[len - 1] = '\0';
+
+                // Check if the buffer is empty or just a newline
+                if (buf[0] != '\0')
+                    snprintf(acdb_files_path, ACDB_PATH_MAX_LENGTH, "%s%s", ACDB_PATH, buf);
+            }
+
+            fclose(file);
+            return;
+        }
+    }
+}
+#endif
 
 static int get_acdb_files_from_directory(const char* acdb_files_path,
                                          struct gsl_acdb_data_files *data_files)
@@ -340,6 +388,16 @@ int graph_init()
         ret = -ENOENT;
         goto err;
     }
+
+#ifdef PRODUCT_PLATFORM_SOD
+    /**
+     * Sometimes acdb_path must be determined at runtime based on the codec name.
+     * The path will only be updated if the codec provides information about
+     * itself and the device is present in the sony_devices_info array.
+     */
+    get_acdb_files_path(acdb_path);
+#endif
+
     AGM_LOGI("acdb file path: %s\n", acdb_path);
 
     ret = get_acdb_files_from_directory(acdb_path, &acdb_files);
